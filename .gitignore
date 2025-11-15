@@ -171,3 +171,6 @@ snurran.sh
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+
+# data
+.cache.sqlite
