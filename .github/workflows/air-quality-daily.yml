@@ -30,10 +30,11 @@ jobs:
       - name: Setup environment variables
         run: |
           echo "AQICN_API_KEY=${{ secrets.AQICN_API_KEY }}" >> .env
-          echo "AQICN_COUNTRY=${{ secrets.AQICN_COUNTRY }}" >> .env
-          echo "AQICN_CITY=${{ secrets.AQICN_CITY }}" >> .env
-          echo "AQICN_STREET=${{ secrets.AQICN_STREET }}" >> .env
-          echo "AQICN_URL=${{ secrets.AQICN_URL }}" >> .env
+          echo "AQICN_COUNTRY=${{ vars.AQICN_COUNTRY }}" >> .env
+          echo "AQICN_CITY=${{ vars.AQICN_CITY }}" >> .env
+          echo "AQICN_STREET=${{ vars.AQICN_STREET }}" >> .env
+          echo "AQICN_URL=${{ vars.AQICN_URL }}" >> .env
+          echo "METEOSOURCE_API_KEY=${{ secrets.METEOSOURCE_API_KEY }}" >> .env
 
       - name: Execute Python notebooks
         env:
@@ -55,4 +56,5 @@ jobs:
           skip_dirty_check: true
           skip_fetch: true
           skip_checkout: true
+
           push_options: '--force'
