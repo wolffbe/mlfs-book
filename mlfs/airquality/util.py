@@ -298,3 +298,64 @@ def backfill_predictions_for_monitoring(weather_fg, air_quality_df, monitor_fg, 
     df = df.drop('pm25', axis=1)
     monitor_fg.insert(df, write_options={"wait_for_job": True})
     return hindcast_df
+
+def backfill_predictions_for_monitoring_cloud_cover(weather_fg, air_quality_df, monitor_fg, model):
+    features_df = weather_fg.read()
+    features_df = features_df.sort_values(by=['date'], ascending=True)
+    features_df = features_df.tail(10)
+
+    cloud_df = monitor_fg.read()[['date', 'cloud_cover']]
+    cloud_df['cloud_cover'] = cloud_df['cloud_cover'].fillna(0).astype('int64')
+    
+    features_df = pd.merge(features_df, cloud_df, on='date', how='left')
+    features_df['cloud_cover'] = features_df['cloud_cover'].fillna(0).astype('int64')
+    
+    features_df['predicted_pm25'] = model.predict(features_df[['temperature_2m_mean', 'precipitation_sum', 'wind_speed_10m_max', 'wind_direction_10m_dominant', 'cloud_cover']])
+    
+    df = pd.merge(features_df, air_quality_df[['date','pm25','street','country']], on="date")
+    df['days_before_forecast_day'] = 1
+    hindcast_df = df
+    df = df.drop('pm25', axis=1)
+    monitor_fg.insert(df, write_options={"wait_for_job": True})
+    return hindcast_df
+
+def backfill_predictions_for_monitoring_cloud_cover_lag(weather_fg, air_quality_df, monitor_fg, model):
+    features_df = weather_fg.read()
+    features_df = features_df.sort_values(by=['date'], ascending=True)
+    features_df = features_df.tail(10)
+
+    
+    # Get expected features from the model
+    expected_features = model.get_booster().feature_names
+
+    
+    # Ensure all expected features exist
+    for col in expected_features:
+        if col not in features_df.columns:
+            features_df[col] = 0  # Fill missing columns if needed
+
+
+    features_df['predicted_pm25'] = model.predict(features_df[expected_features])
+    
+    df = pd.merge(features_df, air_quality_df[['date','pm25','street','country']], on="date")
+    df['days_before_forecast_day'] = 1
+
+    
+    for col in df.columns:
+        if 'cloud_cover' in col:
+            df[col] = df[col].fillna(0).astype('int64')
+        elif 'minus' in col or col in ['temperature_2m_mean', 'precipitation_sum', 'wind_speed_10m_max', 'wind_direction_10m_dominant']:
+            df[col] = df[col].fillna(0).astype('float32')
+
+    hindcast_df = df.copy()
+
+
+    hindcast_df = df
+    df = df.drop('pm25', axis=1)
+    df['cloud_cover'] = df['cloud_cover'].astype('int64')
+    df['cloud_cover_minus_1'] = df['cloud_cover_minus_1'].astype('float64')
+    df['cloud_cover_minus_2'] = df['cloud_cover_minus_2'].astype('float64')
+    df['cloud_cover_minus_3'] = df['cloud_cover_minus_3'].astype('float64')
+
+    monitor_fg.insert(df, write_options={"wait_for_job": True})
+    return hindcast_df
