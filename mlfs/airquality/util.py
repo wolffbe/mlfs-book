@@ -141,7 +141,7 @@ def trigger_request(url:str):
     return data
 
 
-def get_pm25(aqicn_url: str, country: str, city: str, street: str, day: datetime.date, AQI_API_KEY: str):
+def get_pm25(aqicn_url: str, country: str, city: str, borough: str, day: datetime.date, AQI_API_KEY: str):
     """
     Returns DataFrame with air quality (pm25) as dataframe
     """
@@ -150,16 +150,6 @@ def get_pm25(aqicn_url: str, country: str, city: str, street: str, day: datetime
 
     # Make a GET request to fetch the data from the API
     data = trigger_request(url)
-
-    # if we get 'Unknown station' response then retry with city in url
-    if data['data'] == "Unknown station":
-        url1 = f"https://api.waqi.info/feed/{country}/{street}/?token={AQI_API_KEY}"
-        data = trigger_request(url1)
-
-    if data['data'] == "Unknown station":
-        url2 = f"https://api.waqi.info/feed/{country}/{city}/{street}/?token={AQI_API_KEY}"
-        data = trigger_request(url2)
-
 
     # Check if the API response contains the data
     if data['status'] == 'ok':
@@ -171,7 +161,7 @@ def get_pm25(aqicn_url: str, country: str, city: str, street: str, day: datetime
 
         aq_today_df['country'] = country
         aq_today_df['city'] = city
-        aq_today_df['street'] = street
+        aq_today_df['borough'] = borough
         aq_today_df['date'] = day
         aq_today_df['date'] = pd.to_datetime(aq_today_df['date'])
         aq_today_df['url'] = aqicn_url
@@ -180,7 +170,6 @@ def get_pm25(aqicn_url: str, country: str, city: str, street: str, day: datetime
         raise requests.exceptions.RequestException(data['data'])
 
     return aq_today_df
-
 
 def plot_air_quality_forecast(city: str, street: str, df: pd.DataFrame, file_path: str, hindcast=False):
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -198,6 +187,53 @@ def plot_air_quality_forecast(city: str, street: str, df: pd.DataFrame, file_pat
     # Set the labels and title
     ax.set_xlabel('Date')
     ax.set_title(f"PM2.5 Predicted (Logarithmic Scale) for {city}, {street}")
+    ax.set_ylabel('PM2.5')
+
+    colors = ['green', 'yellow', 'orange', 'red', 'purple', 'darkred']
+    labels = ['Good', 'Moderate', 'Unhealthy for Some', 'Unhealthy', 'Very Unhealthy', 'Hazardous']
+    ranges = [(0, 49), (50, 99), (100, 149), (150, 199), (200, 299), (300, 500)]
+    for color, (start, end) in zip(colors, ranges):
+        ax.axhspan(start, end, color=color, alpha=0.3)
+
+    # Add a legend for the different Air Quality Categories
+    patches = [Patch(color=colors[i], label=f"{labels[i]}: {ranges[i][0]}-{ranges[i][1]}") for i in range(len(colors))]
+    legend1 = ax.legend(handles=patches, loc='upper right', title="Air Quality Categories", fontsize='x-small')
+
+    # Aim for ~10 annotated values on x-axis, will work for both forecasts ans hindcasts
+    if len(df.index) > 11:
+        every_x_tick = len(df.index) / 10
+        ax.xaxis.set_major_locator(MultipleLocator(every_x_tick))
+
+    plt.xticks(rotation=45)
+
+    if hindcast == True:
+        ax.plot(day, df['pm25'], label='Actual PM2.5', color='black', linewidth=2, marker='^', markersize=5, markerfacecolor='grey')
+        legend2 = ax.legend(loc='upper left', fontsize='x-small')
+        ax.add_artist(legend1)
+
+    # Ensure everything is laid out neatly
+    plt.tight_layout()
+
+    # # Save the figure, overwriting any existing file with the same name
+    plt.savefig(file_path)
+    return plt
+
+def plot_air_quality_forecast_city(city: str, df: pd.DataFrame, file_path: str, hindcast=False):
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    day = pd.to_datetime(df['date']).dt.date
+    # Plot each column separately in matplotlib
+    ax.plot(day, df['predicted_pm25'], label='Predicted PM2.5', color='red', linewidth=2, marker='o', markersize=5, markerfacecolor='blue')
+
+    # Set the y-axis to a logarithmic scale
+    ax.set_yscale('log')
+    ax.set_yticks([0, 10, 25, 50, 100, 250, 500])
+    ax.get_yaxis().set_major_formatter(plt.ScalarFormatter())
+    ax.set_ylim(bottom=1)
+
+    # Set the labels and title
+    ax.set_xlabel('Date')
+    ax.set_title(f"PM2.5 Predicted (Logarithmic Scale) for {city}")
     ax.set_ylabel('PM2.5')
 
     colors = ['green', 'yellow', 'orange', 'red', 'purple', 'darkred']
@@ -357,5 +393,30 @@ def backfill_predictions_for_monitoring_cloud_cover_lag(weather_fg, air_quality_
     df['cloud_cover_minus_2'] = df['cloud_cover_minus_2'].astype('float64')
     df['cloud_cover_minus_3'] = df['cloud_cover_minus_3'].astype('float64')
 
+    monitor_fg.insert(df, write_options={"wait_for_job": True})
+    return hindcast_df
+
+def backfill_predictions_for_monitoring_berlin(weather_fg, air_quality_df, monitor_fg, model):
+    # Get the last 10 dates that have actual air quality data
+    last_10_dates = air_quality_df['date'].sort_values().tail(10).unique()
+    
+    # Read all weather features
+    features_df = weather_fg.read()
+    
+    # Filter to only those dates that have actual air quality data
+    features_df = features_df[features_df['date'].isin(last_10_dates)]
+    features_df = features_df.sort_values(by=['date'], ascending=True)
+    
+    print(f"Using dates: {features_df['date'].min()} to {features_df['date'].max()}")
+    
+    features_df['predicted_pm25'] = model.predict(features_df[['temperature_2m_mean', 'precipitation_sum', 'wind_speed_10m_max', 'wind_direction_10m_dominant']])
+    
+    df = pd.merge(features_df, air_quality_df[['date','pm25','country']], on="date")
+    
+    print(f"Merged df shape: {df.shape}")
+    
+    df['days_before_forecast_day'] = 1
+    hindcast_df = df
+    df = df.drop('pm25', axis=1)
     monitor_fg.insert(df, write_options={"wait_for_job": True})
     return hindcast_df

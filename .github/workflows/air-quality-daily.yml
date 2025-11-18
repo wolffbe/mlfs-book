@@ -42,8 +42,8 @@ jobs:
           HOPSWORKS_HOST: ${{ vars.HOPSWORKS_HOST }}
           HOPSWORKS_PROJECT: ${{ vars.HOPSWORKS_PROJECT }}
         run: |
-          ipython notebooks/airquality/2_air_quality_feature_pipeline.ipynb
-          ipython notebooks/airquality/4_air_quality_batch_inference.ipynb
+          python 0_air_quality_batch.py --notebook notebooks/airquality/2_air_quality_feature_pipeline_berlin.ipynb --csvfile /home/bjpw/workspace/mlfs-book/data/berlin.csv
+          ipython notebooks/airquality/4_air_quality_batch_inference_berlin.ipynb
 
       - name: GitHub Pages publish
         uses: stefanzweifel/git-auto-commit-action@v5
