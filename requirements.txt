@@ -15,4 +15,5 @@ nbformat
 Faker
 invoke
 python-dotenv
+papermill
 #feldera==0.41

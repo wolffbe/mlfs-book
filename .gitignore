@@ -174,3 +174,9 @@ snurran.sh
 
 # data
 .cache.sqlite
+
+out_*.ipynb
+
+air_quality_model
+air_quality_model_berlin
+air_quality_model_cloud_cover

@@ -1,0 +1,13 @@
+country,city,borough,public_url,aqicn_url,csv
+Germany,Berlin,Mitte,https://aqicn.org/station/@65227/,https://api.waqi.info/feed/A65227/,mitte.csv
+Germany,Berlin,Pankow,https://aqicn.org/station/@106318/,https://api.waqi.info/feed/A106318/,pankow.csv
+Germany,Berlin,Reinickendorf,https://aqicn.org/station/@531805/,https://api.waqi.info/feed/A531805/,reinickendorf.csv
+Germany,Berlin,Spandau,https://aqicn.org/station/@52624/,https://api.waqi.info/feed/A52624/,spandau.csv
+Germany,Berlin,Charlottenburg-Wilmersdorf,https://aqicn.org/station/@72796/,https://api.waqi.info/feed/A72796/,charlottenburg-wilmersdorf.csv
+Germany,Berlin,Steglitz-Zehlendorf,https://aqicn.org/station/@70642/,https://api.waqi.info/feed/A70642/,steglitz-zehlendorf.csv
+Germany,Berlin,Tempelhof-Schöneberg,https://aqicn.org/station/@116467/,https://api.waqi.info/feed/A116467/,tempelhof-schoeneberg.csv
+Germany,Berlin,Treptow-Köpenick,https://aqicn.org/station/@535717/,https://api.waqi.info/feed/A535717/,treptow-koepenick.csv
+Germany,Berlin,Marzahn-Hellersdorf,https://aqicn.org/station/@68416/,https://api.waqi.info/feed/A68416/,marzahn-hellersdorf.csv
+Germany,Berlin,Lichtenberg,https://aqicn.org/station/@99187/,https://api.waqi.info/feed/A99187/,lichtenberg.csv
+Germany,Berlin,Friedrichshain-Kreuzberg,https://aqicn.org/station/@55993/,https://api.waqi.info/feed/A55993/,friedrichshain-kreuzberg.csv
+Germany,Berlin,Neukölln,https://aqicn.org/station/@472333/,https://api.waqi.info/feed/A472333/,neukoelln.csv
