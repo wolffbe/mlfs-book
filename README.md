@@ -6,13 +6,13 @@ by Benedict Wolff & Kasper Malm as part of the course [Scalable Machine Learning
 
 This forecasting service predicts Berlin’s PM2.5 levels one week ahead using historical air-quality data, weather forecasts, and machine-learning pipelines. It integrates with Hopsworks, AQICN, and MeteoSource, supports multiple feature setups (base, cloud cover, lagged), and automates feature ingestion, model training, and batch inference to generate a dashboard that is deployed at [wolffbe.github.io/mlfs-book/air-quality/](https://wolffbe.github.io/mlfs-book/air-quality/).
 
-![Berlin air quality forecast](docs/air-quality/assets/img/pm25_forecast_berlin.png)
+<img src="docs/air-quality/assets/img/pm25_forecast_berlin.png" alt="Berlin air quality forecast"/>
 
 ## Minimum Viable Prediction Service (MVPS) Kanban Board
 
-The MVPS Kanban is a minimal task board outlining only the essential steps needed to build a first working end-to-end prediction service.
+The MVPS Kanban outlines the frameworks and tools needed to build this end-to-end prediction service.
 
-![MVPS Kanban](docs/air-quality/assets/img/mvps_kanban.jpg)
+<img src="docs/air-quality/assets/img/mvps_kanban.jpg" alt="MVPS Kanban"/>
 
 The forecasting service uses the following tools:
 
@@ -176,45 +176,45 @@ Running backfill, the feature pipeline, training, and batch inference based on h
 
 #### Training
 
-![historical air quality training](docs/air-quality/assets/img/pm25_prediction.jpg)
-![historical air quality training](docs/air-quality/assets/img/pm25_training_feature_importance.png)
+<img src="docs/air-quality/assets/img/pm25_prediction.jpg" alt="historical air quality training"/>
+<img src="docs/air-quality/assets/img/pm25_training_feature_importance.png" alt="historical air quality feature importance"/>
 
 #### Prediction
 
-![historical air quality prediction](docs/air-quality/assets/img/pm25_hindcast_1day.png)
+<img src="docs/air-quality/assets/img/pm25_hindcast_1day.png" alt="historical air quality prediction"/>
 
 ### Cloud cover
 
 #### Training
 
-![cloud cover training](docs/air-quality/assets/img/pm25_prediction_cloud_cover.jpg)
-![cloud cover training](docs/air-quality/assets/img/pm25_training_cloud_cover_feature_importance.png)
+<img src="docs/air-quality/assets/img/pm25_prediction_cloud_cover.jpg" alt="cloud cover training"/>
+<img src="docs/air-quality/assets/img/pm25_training_cloud_cover_feature_importance.png" alt="cloud cover feature importance"/>
 
 #### Prediction
 
-![cloud cover prediction](docs/air-quality/assets/img/pm25_hindcast_1day_cloud_cover.png)
+<img src="docs/air-quality/assets/img/pm25_hindcast_1day_cloud_cover.png" alt="cloud cover prediction"/>
 
 ### Cloud cover and lag
 
 #### Training
 
-![cloud cover and lag training](docs/air-quality/assets/img/pm25_prediction_cloud_cover_lag.jpg)
-![cloud cover training](docs/air-quality/assets/img/pm25_training_cloud_cover_lag_feature_importance.png)
+<img src="docs/air-quality/assets/img/pm25_prediction_cloud_cover_lag.jpg" alt="cloud cover and lag training"/>
+<img src="docs/air-quality/assets/img/pm25_training_cloud_cover_lag_feature_importance.png" alt="cloud cover and lag feature importance"/>
 
 #### Prediction
 
-![cloud cover and lag prediction](docs/air-quality/assets/img/pm25_hindcast_1day_cloud_cover_lag.png)
+<img src="docs/air-quality/assets/img/pm25_hindcast_1day_cloud_cover_lag.png" alt="cloud cover and lag prediction"/>
 
 ### Berlin (12 sensors)
 
 #### Training
 
-![berlin](docs/air-quality/assets/img/pm25_prediction_berlin.png)
-![berlin](docs/air-quality/assets/img/pm25_training_berlin_feature_importance.png)
+<img src="docs/air-quality/assets/img/pm25_prediction_berlin.png" alt="Berlin 12 sensors training"/>
+<img src="docs/air-quality/assets/img/pm25_training_berlin_feature_importance.png" alt="Berlin 12 sensors feature importance"/>
 
 #### Prediction
 
-![cloud cover and lag prediction](docs/air-quality/assets/img/pm25_hindcast_1day_berlin.png)
+<img src="docs/air-quality/assets/img/pm25_hindcast_1day_berlin.png" alt="Berlin 12 sensors prediction"/>
 
 ## Discussion
 
