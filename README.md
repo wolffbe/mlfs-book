@@ -218,6 +218,13 @@ Running backfill, the feature pipeline, training, and batch inference based on h
 
 ## Discussion
 
+| Model | Mean Error | Std of Error | MAE | MSE | RMSE | R² |
+|-------|------------|--------------|-----|-----|------|----|
+| Air quality only | 7.24 | 13.68 | 12.20 | 238.60 | 15.45 | -0.80 |
+| Air quality and cloud coverage | 6.83 | 14.57 | 12.30 | 257.82 | 16.06 | -0.95 |
+| Air quality, cloud coverage and lag | 6.13 | 13.02 | 11.26 | 206.32 | 14.36 | -0.56 |
+| Air quality across Berlin (one sensor per borough) | – | – | 5.0772 | 177.0633 | 13.3065 | -0.1013 |
+
 The model using only air quality data performed poorly during training, with a mean error of 7.24, RMSE of 15.45, and R² of -0.80, indicating predictions worse than a mean-based baseline. Adding cloud coverage slightly reduced the mean error but increased variability and further decreased R² to -0.95, suggesting limited predictive value. Additionally included lag features improved performance across all error metrics (MAE 11.26, RMSE 14.36, R² -0.56), showing that temporal dependencies enhance model accuracy. For the Berlin dataset with twelve sensors, errors were lower (MAE 5.08, RMSE 13.31, R² -0.10), indicating that spatial aggregation improves predictability.
 
 ## Conclusion
@@ -225,5 +232,6 @@ The model using only air quality data performed poorly during training, with a m
 The evaluation shows that including cloud cover alongside air quality data improved predictive performance during inference, even without lag features, whereas adding lag features provided the best results during training but did not necessarily translate to better inference performance. Temperature, wind speed, and wind direction remain the most influential predictors, with lagged wind variables contributing to capturing temporal patterns. Key challenges included sourcing reliable sensor data and adapting the pipeline to accommodate additional features, particularly lagged variables, which required extensive modifications. Overall, the results emphasize the need to balance feature complexity with generalization and highlight the importance of meteorological factors in predicting PM2.5 concentrations.
 
 ## Acknowledgements
+
 
 Our forecasting service is based on the repository [mlfs-book](https://github.com/featurestorebook/mlfs-book), chapter three of the corresponding O'Reilly's _Building Machine Learning Systems with a Feature Store_ by [Jim Dowling](https://github.com/jimdowling), and the first lab that we conducted as part of the course [Scalable Machine Learning and Deep Learning](https://canvas.kth.se/courses/57476) at KTH Royal Institute of Technology.
